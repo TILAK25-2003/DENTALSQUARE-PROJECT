@@ -66,7 +66,17 @@ const Navbar = () => {
             )}
           </div>
 
-          <div className="md:hidden flex items-center">
+          {/* Mobile Header Elements */}
+          <div className="md:hidden flex items-center gap-4">
+            {/* Doctor Login Icon - Visible on Mobile */}
+            <Link 
+              to={isAdmin ? "/admin" : "/login"} 
+              className={clsx("transition-colors", isAdmin ? "text-teal" : "text-gray-300 hover:text-white")}
+              title={isAdmin ? "Dashboard" : "Doctor Login"}
+            >
+              <UserCog size={24} />
+            </Link>
+
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-300 hover:text-white focus:outline-none"
