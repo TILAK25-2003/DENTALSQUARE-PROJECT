@@ -40,8 +40,12 @@ export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return localStorage.getItem('isAdmin') === 'true';
   });
 
+  // Initialize password from Environment Variable or secure default
+  // Note: In a production app with a real backend, this would be validated on the server.
   const [adminPassword, setAdminPassword] = useState(() => {
-    return localStorage.getItem('adminPassword') || 'admin123';
+    const stored = localStorage.getItem('adminPassword');
+    // Use the env variable if available, otherwise fallback (fallback should be avoided in prod)
+    return stored || import.meta.env.VITE_ADMIN_PASSWORD || 'puja1995';
   });
 
   // --- Logs State (For SMS Simulation) ---
@@ -106,6 +110,7 @@ export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       toast.success('Welcome back, Doctor!');
       return true;
     } else {
+      toast.error('Invalid Credentials');
       return false;
     }
   };
