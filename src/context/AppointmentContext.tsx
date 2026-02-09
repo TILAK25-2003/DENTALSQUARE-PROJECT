@@ -17,29 +17,49 @@ export interface Appointment {
 
 interface AppointmentContextType {
   appointments: Appointment[];
+  smsLogs: string[];
   addAppointment: (data: Omit<Appointment, 'id' | 'status' | 'createdAt'>) => void;
   updateStatus: (id: string, status: Appointment['status']) => void;
   isAdmin: boolean;
-  login: () => void;
+  login: (password: string) => boolean;
   logout: () => void;
+  changePassword: (newPassword: string) => void;
 }
 
 const AppointmentContext = createContext<AppointmentContextType | undefined>(undefined);
 
 export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // --- Appointments State ---
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     const saved = localStorage.getItem('appointments');
     return saved ? JSON.parse(saved) : [];
   });
 
+  // --- Auth State ---
   const [isAdmin, setIsAdmin] = useState(() => {
     return localStorage.getItem('isAdmin') === 'true';
   });
 
+  const [adminPassword, setAdminPassword] = useState(() => {
+    return localStorage.getItem('adminPassword') || 'admin123';
+  });
+
+  // --- Logs State (For SMS Simulation) ---
+  const [smsLogs, setSmsLogs] = useState<string[]>(() => {
+    const saved = localStorage.getItem('smsLogs');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  // --- Effects ---
   useEffect(() => {
     localStorage.setItem('appointments', JSON.stringify(appointments));
   }, [appointments]);
 
+  useEffect(() => {
+    localStorage.setItem('smsLogs', JSON.stringify(smsLogs));
+  }, [smsLogs]);
+
+  // --- Actions ---
   const addAppointment = (data: Omit<Appointment, 'id' | 'status' | 'createdAt'>) => {
     const newAppointment: Appointment = {
       ...data,
@@ -49,24 +69,45 @@ export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     };
     setAppointments((prev) => [newAppointment, ...prev]);
     
-    // Simulate email notification
-    console.log('📧 Email sent to Doctor: New Appointment Booked!', newAppointment);
-    console.log('📧 Email sent to Patient: Appointment Received!', newAppointment);
-    
     toast.success('Appointment Request Sent Successfully!');
   };
 
   const updateStatus = (id: string, status: Appointment['status']) => {
+    const appointment = appointments.find(a => a.id === id);
+    let toastMessage = `Appointment marked as ${status}`;
+    let icon;
+
+    // Simulate SMS Trigger when Confirmed
+    if (appointment && status === 'Confirmed' && appointment.status !== 'Confirmed') {
+      const timestamp = new Date().toLocaleTimeString();
+      const smsMessage = `[${timestamp}] To: ${appointment.phone} | Msg: "Dear ${appointment.patientName}, your appointment is CONFIRMED for ${appointment.date} at ${appointment.time}."`;
+      
+      // Add to logs
+      setSmsLogs(prev => [smsMessage, ...prev]);
+      
+      // Log to console
+      console.log(`%c[SMS GATEWAY SIMULATION]`, 'color: #39cccc; font-weight: bold;', smsMessage);
+      
+      toastMessage = `Confirmed & SMS Logged`;
+      icon = '📱';
+    }
+
     setAppointments((prev) =>
       prev.map((appt) => (appt.id === id ? { ...appt, status } : appt))
     );
-    toast.success(`Appointment marked as ${status}`);
+    
+    toast.success(toastMessage, { icon });
   };
 
-  const login = () => {
-    setIsAdmin(true);
-    localStorage.setItem('isAdmin', 'true');
-    toast.success('Welcome back, Doctor!');
+  const login = (password: string) => {
+    if (password === adminPassword) {
+      setIsAdmin(true);
+      localStorage.setItem('isAdmin', 'true');
+      toast.success('Welcome back, Doctor!');
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const logout = () => {
@@ -75,8 +116,23 @@ export const AppointmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     toast.success('Logged out successfully');
   };
 
+  const changePassword = (newPassword: string) => {
+    setAdminPassword(newPassword);
+    localStorage.setItem('adminPassword', newPassword);
+    toast.success('Password updated successfully');
+  };
+
   return (
-    <AppointmentContext.Provider value={{ appointments, addAppointment, updateStatus, isAdmin, login, logout }}>
+    <AppointmentContext.Provider value={{ 
+      appointments, 
+      smsLogs, 
+      addAppointment, 
+      updateStatus, 
+      isAdmin, 
+      login, 
+      logout, 
+      changePassword 
+    }}>
       {children}
     </AppointmentContext.Provider>
   );

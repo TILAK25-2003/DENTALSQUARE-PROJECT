@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CLINICS, SERVICES, CONTACT_INFO } from '../data/constants';
+import { CLINICS, SERVICES } from '../data/constants';
 import { useAppointments } from '../context/AppointmentContext';
-import { Calendar, MapPin, User, Phone, Mail, MessageSquare, CheckCircle } from 'lucide-react';
+import { Calendar, MapPin, User, Phone, Mail, MessageSquare, CheckCircle, Clock } from 'lucide-react';
 
 type BookingFormData = {
   patientName: string;

@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { useAppointments, Appointment } from '../context/AppointmentContext';
+import { useAppointments } from '../context/AppointmentContext';
 import { Navigate } from 'react-router-dom';
-import { Calendar, CheckCircle, XCircle, Clock, MapPin, Phone, MessageSquare } from 'lucide-react';
+import { 
+  Calendar, CheckCircle, XCircle, MapPin, Phone, MessageSquare, 
+  Settings, LogOut, Smartphone, Lock
+} from 'lucide-react';
 import { CLINICS, SERVICES } from '../data/constants';
 import clsx from 'clsx';
+import { useForm } from 'react-hook-form';
 
 const Admin = () => {
-  const { appointments, isAdmin, updateStatus } = useAppointments();
+  const { appointments, smsLogs, isAdmin, updateStatus, logout, changePassword } = useAppointments();
+  const [activeTab, setActiveTab] = useState<'appointments' | 'settings' | 'logs'>('appointments');
   const [filter, setFilter] = useState<'All' | 'Pending' | 'Confirmed' | 'Cancelled'>('All');
+  
+  // Password Change Form
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   if (!isAdmin) return <Navigate to="/login" />;
 
@@ -17,6 +25,11 @@ const Admin = () => {
 
   const getClinicName = (id: string) => CLINICS.find(c => c.id === id)?.name || id;
   const getServiceName = (id: string) => SERVICES.find(s => s.id === id)?.title || id;
+
+  const onPasswordSubmit = (data: any) => {
+    changePassword(data.newPassword);
+    reset();
+  };
 
   const StatusBadge = ({ status }: { status: string }) => {
     const styles = {
@@ -32,101 +45,203 @@ const Admin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-          <h1 className="text-2xl font-bold text-navy">Appointment Dashboard</h1>
-          <div className="flex bg-white rounded-lg p-1 shadow-sm">
-            {['All', 'Pending', 'Confirmed', 'Cancelled'].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f as any)}
-                className={clsx(
-                  "px-4 py-2 rounded-md text-sm font-medium transition-colors",
-                  filter === f ? "bg-navy text-white" : "text-gray-600 hover:bg-gray-50"
-                )}
-              >
-                {f}
-              </button>
-            ))}
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* Admin Header */}
+      <div className="bg-navy text-white shadow-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-bold text-teal">Admin Panel</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setActiveTab('appointments')}
+              className={clsx("text-sm font-medium hover:text-teal transition-colors", activeTab === 'appointments' ? 'text-teal' : 'text-gray-300')}
+            >
+              Appointments
+            </button>
+            <button 
+              onClick={() => setActiveTab('logs')}
+              className={clsx("text-sm font-medium hover:text-teal transition-colors", activeTab === 'logs' ? 'text-teal' : 'text-gray-300')}
+            >
+              SMS Logs
+            </button>
+            <button 
+              onClick={() => setActiveTab('settings')}
+              className={clsx("text-sm font-medium hover:text-teal transition-colors", activeTab === 'settings' ? 'text-teal' : 'text-gray-300')}
+            >
+              Settings
+            </button>
+            <div className="h-6 w-px bg-gray-700 mx-2"></div>
+            <button onClick={logout} className="text-gray-300 hover:text-red-400" title="Logout">
+              <LogOut size={20} />
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="grid gap-4">
-          {filteredAppointments.length === 0 ? (
-            <div className="text-center py-20 bg-white rounded-xl shadow-sm">
-              <Calendar className="mx-auto text-gray-300 mb-4" size={48} />
-              <p className="text-gray-500">No appointments found.</p>
-            </div>
-          ) : (
-            filteredAppointments.map((appt) => (
-              <div key={appt.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-6">
-                <div className="flex-grow space-y-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-lg font-bold text-navy">{appt.patientName}</h3>
-                      <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
-                        <Phone size={14} />
-                        <a href={`tel:${appt.phone}`} className="hover:text-teal">{appt.phone}</a>
-                        {appt.email && <span className="text-gray-300">|</span>}
-                        {appt.email && <span className="text-gray-500">{appt.email}</span>}
-                      </div>
-                    </div>
-                    <StatusBadge status={appt.status} />
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-4">
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <MapPin size={16} className="text-teal" />
-                      {getClinicName(appt.clinicId)}
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <CheckCircle size={16} className="text-teal" />
-                      {getServiceName(appt.serviceId)}
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600">
-                      <Calendar size={16} className="text-teal" />
-                      {appt.date} at {appt.time}
-                    </div>
-                    {appt.message && (
-                      <div className="flex items-start gap-2 text-gray-600 col-span-full bg-gray-50 p-3 rounded-lg">
-                        <MessageSquare size={16} className="text-teal mt-1 shrink-0" />
-                        <p className="italic">"{appt.message}"</p>
-                      </div>
+      <div className="flex-grow p-4 sm:p-8 max-w-7xl mx-auto w-full">
+        
+        {/* --- APPOINTMENTS TAB --- */}
+        {activeTab === 'appointments' && (
+          <>
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+              <h2 className="text-2xl font-bold text-navy">Manage Appointments</h2>
+              <div className="flex bg-white rounded-lg p-1 shadow-sm">
+                {['All', 'Pending', 'Confirmed', 'Cancelled'].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => setFilter(f as any)}
+                    className={clsx(
+                      "px-4 py-2 rounded-md text-sm font-medium transition-colors",
+                      filter === f ? "bg-navy text-white" : "text-gray-600 hover:bg-gray-50"
                     )}
-                  </div>
-                </div>
-
-                <div className="flex lg:flex-col gap-2 justify-center border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6">
-                  {appt.status === 'Pending' && (
-                    <>
-                      <button 
-                        onClick={() => updateStatus(appt.id, 'Confirmed')}
-                        className="flex-1 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <CheckCircle size={16} /> Confirm
-                      </button>
-                      <button 
-                        onClick={() => updateStatus(appt.id, 'Cancelled')}
-                        className="flex-1 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <XCircle size={16} /> Cancel
-                      </button>
-                    </>
-                  )}
-                  <a 
-                    href={`https://wa.me/91${appt.phone}?text=Hello ${appt.patientName}, regarding your appointment at Dental Square...`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-teal/10 text-teal-dark px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal/20 transition-colors flex items-center justify-center gap-2"
                   >
-                    <MessageSquare size={16} /> WhatsApp
-                  </a>
+                    {f}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              {filteredAppointments.length === 0 ? (
+                <div className="text-center py-20 bg-white rounded-xl shadow-sm">
+                  <Calendar className="mx-auto text-gray-300 mb-4" size={48} />
+                  <p className="text-gray-500">No appointments found.</p>
+                </div>
+              ) : (
+                filteredAppointments.map((appt) => (
+                  <div key={appt.id} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-6">
+                    <div className="flex-grow space-y-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-bold text-navy">{appt.patientName}</h3>
+                          <div className="flex items-center gap-2 text-gray-500 text-sm mt-1">
+                            <Phone size={14} />
+                            <a href={`tel:${appt.phone}`} className="hover:text-teal">{appt.phone}</a>
+                          </div>
+                        </div>
+                        <StatusBadge status={appt.status} />
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mt-4">
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <MapPin size={16} className="text-teal" />
+                          {getClinicName(appt.clinicId)}
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <CheckCircle size={16} className="text-teal" />
+                          {getServiceName(appt.serviceId)}
+                        </div>
+                        <div className="flex items-center gap-2 text-gray-600">
+                          <Calendar size={16} className="text-teal" />
+                          {appt.date} at {appt.time}
+                        </div>
+                        {appt.message && (
+                          <div className="flex items-start gap-2 text-gray-600 col-span-full bg-gray-50 p-3 rounded-lg">
+                            <MessageSquare size={16} className="text-teal mt-1 shrink-0" />
+                            <p className="italic">"{appt.message}"</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex lg:flex-col gap-2 justify-center border-t lg:border-t-0 lg:border-l pt-4 lg:pt-0 lg:pl-6">
+                      {appt.status === 'Pending' && (
+                        <>
+                          <button 
+                            onClick={() => updateStatus(appt.id, 'Confirmed')}
+                            className="flex-1 bg-green-50 text-green-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                          >
+                            <CheckCircle size={16} /> Confirm
+                          </button>
+                          <button 
+                            onClick={() => updateStatus(appt.id, 'Cancelled')}
+                            className="flex-1 bg-red-50 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors flex items-center justify-center gap-2"
+                          >
+                            <XCircle size={16} /> Cancel
+                          </button>
+                        </>
+                      )}
+                      <a 
+                        href={`https://wa.me/91${appt.phone}?text=Hello ${appt.patientName}, regarding your appointment at Dental Square...`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 bg-teal/10 text-teal-dark px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal/20 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <MessageSquare size={16} /> WhatsApp
+                      </a>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
+
+        {/* --- LOGS TAB --- */}
+        {activeTab === 'logs' && (
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-navy mb-6">SMS Notification Logs</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="p-4 bg-gray-50 border-b border-gray-100">
+                <p className="text-sm text-gray-500 flex items-center gap-2">
+                  <Smartphone size={16} />
+                  These are simulated logs. In a production environment, these would be sent via an SMS Gateway.
+                </p>
+              </div>
+              <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">
+                {smsLogs.length === 0 ? (
+                  <div className="p-8 text-center text-gray-400">No SMS notifications sent yet.</div>
+                ) : (
+                  smsLogs.map((log, index) => (
+                    <div key={index} className="p-4 hover:bg-gray-50 transition-colors">
+                      <p className="text-sm font-mono text-gray-700">{log}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* --- SETTINGS TAB --- */}
+        {activeTab === 'settings' && (
+          <div className="max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-navy mb-6">Admin Settings</h2>
+            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+              <div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-100">
+                <div className="w-12 h-12 bg-teal/10 rounded-full flex items-center justify-center text-teal">
+                  <Lock size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-navy">Change Password</h3>
+                  <p className="text-sm text-gray-500">Update your login credentials</p>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+
+              <form onSubmit={handleSubmit(onPasswordSubmit)} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+                  <input 
+                    type="password"
+                    {...register('newPassword', { required: 'Password is required', minLength: { value: 6, message: 'Minimum 6 characters' } })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal outline-none"
+                    placeholder="Enter new password"
+                  />
+                  {errors.newPassword && <p className="text-red-500 text-xs mt-1">{errors.newPassword.message as string}</p>}
+                </div>
+                
+                <button 
+                  type="submit"
+                  className="w-full bg-navy hover:bg-navy-light text-white font-bold py-3 rounded-lg transition-colors"
+                >
+                  Update Password
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

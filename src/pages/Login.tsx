@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { useAppointments } from '../context/AppointmentContext';
-import { Lock } from 'lucide-react';
+import { Lock, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const { register, handleSubmit } = useForm();
   const { login } = useAppointments();
   const navigate = useNavigate();
+  const [error, setError] = useState('');
 
   const onSubmit = (data: any) => {
-    // Simple mock login
-    if (data.password === 'admin123') {
-      login();
+    const success = login(data.password);
+    if (success) {
       navigate('/admin');
     } else {
-      alert('Invalid Password (Try: admin123)');
+      setError('Invalid Password');
     }
   };
 
@@ -38,8 +38,17 @@ const Login = () => {
               {...register('password', { required: true })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal outline-none"
               placeholder="Enter password"
+              onChange={() => setError('')}
             />
           </div>
+          
+          {error && (
+            <div className="flex items-center gap-2 text-red-500 text-sm bg-red-50 p-3 rounded-lg">
+              <AlertCircle size={16} />
+              {error}
+            </div>
+          )}
+
           <button 
             type="submit"
             className="w-full bg-navy hover:bg-navy-light text-white font-bold py-3 rounded-lg transition-colors"
@@ -48,7 +57,7 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-6 text-center">
-            <p className="text-xs text-gray-400">Demo Password: admin123</p>
+            <p className="text-xs text-gray-400">Default Password: admin123</p>
         </div>
       </div>
     </div>

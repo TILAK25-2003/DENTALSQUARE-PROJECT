@@ -12,7 +12,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center gap-2 mb-4">
                <img src={CONTACT_INFO.logo} alt="Dental Square" className="h-10 w-auto bg-white rounded-md p-1" />
-               <span className="text-xl font-bold">DENTAL SQUARE</span>
+               <Link to="/" className="text-xl font-bold hover:text-teal transition-colors">DENTAL SQUARE</Link>
             </div>
             <p className="text-gray-300 mb-6 text-sm leading-relaxed">
               Advanced dental care for confident smiles. We provide comprehensive dental services with a focus on hygiene, comfort, and modern technology.
