@@ -36,7 +36,9 @@ const Locations = () => {
                   </div>
                   <div className="flex items-center gap-4 text-gray-600">
                     <Phone className="w-6 h-6 text-sky-blue shrink-0" />
-                    <p className="text-base">{CONTACT_INFO.phone}</p>
+                    <a href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`} className="text-base hover:text-navy transition-colors">
+                      {CONTACT_INFO.phone}
+                    </a>
                   </div>
                   <div className="flex items-center gap-4 text-gray-600">
                     <Clock className="w-6 h-6 text-sky-blue shrink-0" />

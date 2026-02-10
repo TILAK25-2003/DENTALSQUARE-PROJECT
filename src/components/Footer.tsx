@@ -41,7 +41,9 @@ const Footer = () => {
             <ul className="space-y-4 text-gray-300">
               <li className="flex items-start gap-3">
                 <Phone size={18} className="mt-1 text-teal" />
-                <span>{CONTACT_INFO.phone}</span>
+                <a href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`} className="hover:text-white transition-colors">
+                  {CONTACT_INFO.phone}
+                </a>
               </li>
               <li className="flex items-start gap-3">
                 <Mail size={18} className="mt-1 text-teal" />

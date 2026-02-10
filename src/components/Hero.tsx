@@ -42,7 +42,7 @@ const Hero = () => {
                 Book Appointment <ArrowRight size={20} />
               </Link>
               <a 
-                href={`tel:${CONTACT_INFO.phone}`}
+                href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, '')}`}
                 className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border border-white/30 px-8 py-4 rounded-full font-semibold transition-all flex items-center justify-center gap-2"
               >
                 <Phone size={20} /> Call Now
