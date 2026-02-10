@@ -15,7 +15,7 @@ import {
 
 export const CONTACT_INFO = {
   phone: '+91 7001147440',
-  whatsapp: '917001147440', // Updated to match the doctor's phone number
+  whatsapp: '917001147440',
   email: 'dentalsquare00@gmail.com',
   timings: 'Tue - Sun: 10am - 1pm / 6pm - 9pm (Mon Closed)',
   logo: 'https://images.dualite.app/99d68bbd-6706-4896-a9bb-1e740e1b4b9b/Screenshot_2026-01-30_230145-268379d7-1750-4386-b6d6-78d9233ea569.webp'
@@ -125,15 +125,15 @@ export const CLINICS = [
     id: 'clinic-1',
     name: 'Dental Square - Dakshineswar',
     address: '113B, MM Feeder Rd, near Ariadaha Hospital, opposite matrimangal gate, Dakshineswar, Kolkata, West Bengal 700057',
-    mapLink: 'https://maps.app.goo.gl/gDePZuM1FvXDM3ob7',
-    image: 'https://images.dualite.app/99d68bbd-6706-4896-a9bb-1e740e1b4b9b/WhatsApp_Image_2026-01-30_at_2.59.45_PM-35114072-8dc4-4ce3-8486-0f48d1437a5f.webp', // Attachment 3
+    mapLink: 'https://maps.app.goo.gl/6vEWVMDChN72FGAb8',
+    image: 'https://images.dualite.app/99d68bbd-6706-4896-a9bb-1e740e1b4b9b/WhatsApp_Image_2026-01-30_at_2.59.45_PM-35114072-8dc4-4ce3-8486-0f48d1437a5f.webp',
   },
   {
     id: 'clinic-2',
     name: 'Dental Square - Belghoria',
     address: 'Jolkol more, 38/1, Feeder Rd, Beehive Garden, Belghoria, Kolkata, West Bengal 700056',
-    mapLink: 'https://maps.app.goo.gl/NSXg8ebas79BU5ve7',
-    image: 'https://images.dualite.app/99d68bbd-6706-4896-a9bb-1e740e1b4b9b/WhatsApp_Image_2026-02-09_at_9.40.21_PM-0651b2db-d763-427d-b99d-b68a65cfa0c2.webp', // Attachment 2
+    mapLink: 'https://maps.app.goo.gl/ZDTY6GNKvtbaEWny5',
+    image: 'https://images.dualite.app/99d68bbd-6706-4896-a9bb-1e740e1b4b9b/WhatsApp_Image_2026-02-09_at_9.40.21_PM-0651b2db-d763-427d-b99d-b68a65cfa0c2.webp',
   },
 ];
 
@@ -161,5 +161,53 @@ export const REVIEWS = [
     name: 'Soma Banerjee',
     rating: 5,
     text: 'State of the art equipment and very professional behavior. My implant surgery went perfectly.',
+  },
+  {
+    id: 5,
+    name: 'Vikram Singh',
+    rating: 5,
+    text: 'Dr. Puja is excellent with kids. My son was terrified of dentists but she made him feel so comfortable.',
+  },
+  {
+    id: 6,
+    name: 'Anjali Gupta',
+    rating: 5,
+    text: 'Great experience! The clinic is very clean and the appointment system is very efficient. No long waiting times.',
+  },
+  {
+    id: 7,
+    name: 'Rohan Mehta',
+    rating: 5,
+    text: 'Very professional and clean clinic. Dr. Puja is extremely knowledgeable and took the time to explain my treatment options.',
+  },
+  {
+    id: 8,
+    name: 'Sneha Patel',
+    rating: 5,
+    text: 'I was always afraid of visiting the dentist, but the warm and welcoming staff here made me feel completely at ease.',
+  },
+  {
+    id: 9,
+    name: 'Arindam Ghosh',
+    rating: 5,
+    text: 'Excellent service for dentures for my mother. They fit perfectly and she is very happy with them.',
+  },
+  {
+    id: 10,
+    name: 'Meera Reddy',
+    rating: 5,
+    text: 'Very reasonable prices for the high quality of treatment provided. I will definitely be coming back for regular checkups.',
+  },
+  {
+    id: 11,
+    name: 'Suman Kalyan',
+    rating: 5,
+    text: 'The clinic is very hygienic, which is my top priority. Instruments are sterilized properly. Good job!',
+  },
+  {
+    id: 12,
+    name: 'Debaraaj Sen',
+    rating: 5,
+    text: 'Quick and effective treatment for my sudden toothache. The emergency response was appreciated. Thank you!',
   }
 ];

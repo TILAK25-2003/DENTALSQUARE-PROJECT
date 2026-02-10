@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, ShieldCheck, Users } from 'lucide-react';
+import { Award, ShieldCheck, Users, Heart } from 'lucide-react';
 
 const About = () => {
   return (
@@ -36,7 +36,7 @@ const About = () => {
               With specialized expertise in Maxillofacial Prosthodontics and Implantology, we offer advanced solutions for restoring smiles. Our clinics in Dakshineswar and Belghoria are equipped with the latest technology to ensure precise diagnoses and effective treatments.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
                 <Award className="text-navy mb-3" size={32} />
                 <h4 className="font-bold text-navy text-lg">Gold Medalist</h4>
@@ -51,6 +51,11 @@ const About = () => {
                 <Users className="text-navy mb-3" size={32} />
                 <h4 className="font-bold text-navy text-lg">Friendly</h4>
                 <p className="text-sm text-gray-500 mt-1">Patient-First Care</p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
+                <Heart className="text-navy mb-3" size={32} />
+                <h4 className="font-bold text-navy text-lg">1k+ Patients</h4>
+                <p className="text-sm text-gray-500 mt-1">Treated Successfully</p>
               </div>
             </div>
           </div>
