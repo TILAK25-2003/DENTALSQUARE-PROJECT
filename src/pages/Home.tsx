@@ -11,9 +11,9 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-white">
       <Hero />
-      <Services />
       <About />
       <Gallery />
+      <Services />
       <Locations />
       <Testimonials />
       <Footer />
