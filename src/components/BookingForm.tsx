@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CLINICS, SERVICES } from '../data/constants';
+import { CLINICS, SERVICES, CONTACT_INFO } from '../data/constants';
 import { useAppointments } from '../context/AppointmentContext';
 import { Calendar, MapPin, User, Phone, Mail, MessageSquare, CheckCircle, Clock } from 'lucide-react';
 
@@ -35,6 +35,33 @@ const BookingForm = () => {
   }, [preSelectedClinic, setValue]);
 
   const onSubmit = (data: BookingFormData) => {
+    // 1. Get readable names for Clinic and Service
+    const clinicName = CLINICS.find(c => c.id === data.clinicId)?.name || data.clinicId;
+    const serviceName = SERVICES.find(s => s.id === data.serviceId)?.title || data.serviceId;
+
+    // 2. Construct the formatted WhatsApp message
+    // Removed emojis as requested for cleaner text
+    const whatsappMessage = `*New Dental Appointment Request*
+
+Name: ${data.patientName}
+Phone: ${data.phone}
+Email: ${data.email || 'Not provided'}
+Clinic: ${clinicName}
+Service: ${serviceName}
+Date: ${data.date}
+Time: ${data.time}
+Issue: ${data.message || 'None'}
+
+_Sent via Dental Square Website_`;
+
+    // 3. Create the WhatsApp URL
+    // encodeURIComponent is crucial here to handle spaces and special chars correctly
+    const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
+
+    // 4. Open WhatsApp in a new tab
+    window.open(whatsappUrl, '_blank');
+
+    // 5. Proceed with internal state update and navigation
     addAppointment(data);
     navigate('/booking-success');
   };
@@ -187,11 +214,11 @@ const BookingForm = () => {
           type="submit"
           className="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3 rounded-lg transition-colors shadow-lg shadow-teal/20"
         >
-          Confirm Booking
+          Confirm & Send via WhatsApp
         </button>
         
         <p className="text-xs text-center text-gray-500">
-          By booking, you agree to be contacted via Phone/WhatsApp for confirmation.
+          Clicking confirm will open WhatsApp to send your details to the clinic.
         </p>
       </form>
     </div>

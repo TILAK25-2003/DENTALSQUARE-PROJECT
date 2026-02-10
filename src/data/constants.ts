@@ -15,7 +15,7 @@ import {
 
 export const CONTACT_INFO = {
   phone: '+91 7001147440',
-  whatsapp: '917001147440', // Format for API
+  whatsapp: '917001147440', // Updated to match the doctor's phone number
   email: 'dentalsquare00@gmail.com',
   timings: 'Tue - Sun: 10am - 1pm / 6pm - 9pm (Mon Closed)',
   logo: 'https://images.dualite.app/99d68bbd-6706-4896-a9bb-1e740e1b4b9b/Screenshot_2026-01-30_230145-268379d7-1750-4386-b6d6-78d9233ea569.webp'
